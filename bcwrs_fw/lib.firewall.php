@@ -36,3 +36,25 @@ function bcwrs_ids_geolookup($remote_addr)
 
     return $result;
 }
+
+function bcwrs_ids_input_analysis(&$input)
+{
+    $check = false;
+
+    if(true === is_array($input))
+    {
+        foreach($input as &$item)
+        {
+            $check = bcwrs_ids_input_analysis($item);
+        }
+    }
+    else
+    {
+        if(false !== strpos($input, chr(0)))
+        {
+            $check = true;
+        }
+    }
+
+    return $check;
+}

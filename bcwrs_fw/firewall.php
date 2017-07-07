@@ -40,6 +40,13 @@ if(false === empty($bcwrs_config['geoblock']['enable']))
     }
 }
 
+if(false === empty($bcwrs_config['inputblock']['enable']) && false === $bcwrs_client_info['block'])
+{
+    $__SUPER = array($_GET, $_POST, $_COOKIE, $_REQUEST, $_SERVER, $_ENV);
+    $bcwrs_client_info['block'] = bcwrs_ids_input_analysis($__SUPER);
+    unset($__SUPER);
+}
+
 
 if(true === $bcwrs_client_info['block'])
 {

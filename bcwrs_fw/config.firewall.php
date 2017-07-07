@@ -12,5 +12,8 @@ $bcwrs_config = array(
             '/wp-admin/*',
             '/wp-content/plugins/*'
         )
+    ),
+    'inputblock' => array(
+        'enable' => true
     )
 );
