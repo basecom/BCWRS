@@ -1,0 +1,24 @@
+Basecom Cyber Warfare Response Suite
+FileGuard Documentation
+
+
+Files
+
+bcwrs_fg
++- reports/                 Report files will go here
++- config.fileguard.php     Configuration file
++- documentation.txt        This document
++- fileguard.php            Main file
++- lib.fileguard.php        Library file
+
+
+Usage
+
+php fileguard.php
+
+
+Cronjobs
+
+# Basecom Cyber Warfare Response Suite - Script Watch
+0 7,13 * * 1-5 php /var/www/vhosts/yoursite/files/bcwrs_fg/fileguard.php > /dev/null 2>&1
+30 4 * * 1-5 cd /var/www/vhosts/yoursite/files/bcwrs_fg/reports && find . -mtime +90 -delete
