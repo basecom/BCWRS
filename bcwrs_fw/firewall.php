@@ -11,8 +11,8 @@ $bcwrs_client_info['block'] = false;
 $bcwrs_client_info['block_cause'] = '';
 $bcwrs_client_info['reference_code'] = uniqid('fw');
 $bcwrs_client_info['request_time'] = $_SERVER['REQUEST_TIME'];
-$bcwrs_client_info['remote_addr'] = bcwrs_ids_find_ip('123.111.133.153');
-$bcwrs_client_info['request_uri'] = /*$_SERVER['REQUEST_URI']*/ '/wp-admin/admin.php';
+$bcwrs_client_info['remote_addr'] = bcwrs_ids_find_ip();
+$bcwrs_client_info['request_uri'] = $_SERVER['REQUEST_URI'];
 list($bcwrs_client_info['country_code'], $bcwrs_client_info['country_name']) = bcwrs_ids_geolookup($bcwrs_client_info['remote_addr']);
 
 

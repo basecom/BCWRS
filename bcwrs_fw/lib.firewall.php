@@ -9,12 +9,10 @@ if(false === function_exists('fnmatch'))
 }
 
 
-function bcwrs_ids_find_ip($remote_addr = '')
+function bcwrs_ids_find_ip()
 {
-    if(true === empty($remote_addr))
-    {
-        $remote_addr = getenv('REMOTE_ADDR');
-    }
+    $remote_addr = getenv('REMOTE_ADDR');
+
     if(true === empty($remote_addr) && false === empty($remote_addr['REMOTE_ADDR']))
     {
         $remote_addr = $_SERVER['REMOTE_ADDR'];
