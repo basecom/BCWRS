@@ -14,7 +14,7 @@ if(false === function_exists('fnmatch'))
 }
 
 
-function bcwrs_ids_find_ip()
+function bcwrs_fw_find_ip()
 {
     $remote_addr = getenv('REMOTE_ADDR');
 
@@ -26,7 +26,7 @@ function bcwrs_ids_find_ip()
     return $remote_addr;
 }
 
-function bcwrs_ids_geolookup($remote_addr)
+function bcwrs_fw_geolookup($remote_addr)
 {
     $gi = geoip_open("geoip/GeoIP.dat", GEOIP_STANDARD);
 
@@ -40,7 +40,7 @@ function bcwrs_ids_geolookup($remote_addr)
     return $result;
 }
 
-function bcwrs_ids_input_analysis(&$input)
+function bcwrs_fw_input_analysis(&$input)
 {
     $check = false;
 
@@ -48,16 +48,38 @@ function bcwrs_ids_input_analysis(&$input)
     {
         foreach($input as &$item)
         {
-            $check = bcwrs_ids_input_analysis($item);
+            $check = bcwrs_fw_input_analysis($item);
         }
     }
     else
     {
-        if(false !== strpos($input, chr(0)))
-        {
-            $check = true;
-        }
+        $check = bcwrs_fw_input_eval($input);
+
     }
 
     return $check;
+}
+
+function bcwrs_fw_input_eval($input)
+{
+    $result = array(
+        (false === strpos($input, chr(0))),
+        (false === strpos($input, '"'))
+        (false === strpos($input, "'")),
+        (false === strpos($input, "´")),
+        (false === strpos($input, "`")),
+        (false === strpos($input, "\b")),
+        (false === strpos($input, "\n")),
+        (false === strpos($input, "\r")),
+        (false === strpos($input, "\t")),
+        (false === strpos($input, "\Z")),
+        (false === strpos($input, "\\"))
+    );
+
+    foreach($result as $item)
+    {
+        if(false === $item) return true;
+    }
+
+    return false;
 }

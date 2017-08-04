@@ -16,9 +16,9 @@ $bcwrs_client_info['block'] = false;
 $bcwrs_client_info['block_cause'] = '';
 $bcwrs_client_info['reference_code'] = uniqid('fw');
 $bcwrs_client_info['request_time'] = $_SERVER['REQUEST_TIME'];
-$bcwrs_client_info['remote_addr'] = bcwrs_ids_find_ip();
+$bcwrs_client_info['remote_addr'] = bcwrs_fw_find_ip();
 $bcwrs_client_info['request_uri'] = $_SERVER['REQUEST_URI'];
-list($bcwrs_client_info['country_code'], $bcwrs_client_info['country_name']) = bcwrs_ids_geolookup($bcwrs_client_info['remote_addr']);
+list($bcwrs_client_info['country_code'], $bcwrs_client_info['country_name']) = bcwrs_fw_geolookup($bcwrs_client_info['remote_addr']);
 
 
 
@@ -48,7 +48,7 @@ if(false === empty($bcwrs_config['geoblock']['enable']))
 if(false === empty($bcwrs_config['inputblock']['enable']) && false === $bcwrs_client_info['block'])
 {
     $__SUPER = array($_GET, $_POST, $_COOKIE, $_REQUEST, $_SERVER, $_ENV);
-    $bcwrs_client_info['block'] = bcwrs_ids_input_analysis($__SUPER);
+    $bcwrs_client_info['block'] = bcwrs_fw_input_analysis($__SUPER);
     unset($__SUPER);
 }
 
