@@ -28,7 +28,7 @@ function bcwrs_fw_find_ip()
 
 function bcwrs_fw_geolookup($remote_addr)
 {
-    $gi = geoip_open("geoip/GeoIP.dat", GEOIP_STANDARD);
+    $gi = geoip_open(dirname(__FILE__) . "/geoip/GeoIP.dat", GEOIP_STANDARD);
 
     $result = array(
         geoip_country_code_by_addr($gi, $remote_addr),
@@ -64,7 +64,7 @@ function bcwrs_fw_input_eval($input)
 {
     $result = array(
         (false === strpos($input, chr(0))),
-        (false === strpos($input, '"'))
+        (false === strpos($input, '"')),
         (false === strpos($input, "'")),
         (false === strpos($input, "´")),
         (false === strpos($input, "`")),

@@ -5,9 +5,9 @@
  * Main file
  */
 
-require "./config.firewall.php";
-require "geoip/geoip.inc";
-require "./lib.firewall.php";
+require dirname(__FILE__) . "/config.firewall.php";
+require dirname(__FILE__) . "/geoip/geoip.inc";
+require dirname(__FILE__) . "/lib.firewall.php";
 
 
 $bcwrs_client_info = array();
@@ -64,7 +64,7 @@ if(true === $bcwrs_client_info['block'])
     $fh = fopen('report.csv', 'a');
     if(true === is_resource($fh))
     {
-        fputcsv($fh, $bcwrs_client_info, ',', '""');
+        fputcsv($fh, $bcwrs_client_info, ',', '"');
         fclose($fh);
     }
 
