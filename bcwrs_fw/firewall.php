@@ -24,24 +24,26 @@ list($bcwrs_client_info['country_code'], $bcwrs_client_info['country_name']) = b
 
 if(false === empty($bcwrs_config['geoblock']['enable']))
 {
-    if(false === empty($bcwrs_client_info['country']['code']))
+    $isWhitelisted = false;
+
+    if(false === empty($bcwrs_client_info['country_code']))
     {
-        if(false === in_array($bcwrs_client_info['country']['code'], $bcwrs_config['geoblock']['country_whitelist']))
-        {
-            foreach($bcwrs_config['geoblock']['block_request_uri'] as $request_uri)
-            {
-                if(true === fnmatch($request_uri, $bcwrs_client_info['request_uri']))
-                {
-                    $bcwrs_client_info['block'] = true;
-                    $bcwrs_client_info['block_cause'] = sprintf('Bad geo location: %s', $bcwrs_client_info['country']['name']);
-                }
-            }
-        }
+        $isWhitelisted = in_array($bcwrs_client_info['country_code'], $bcwrs_config['geoblock']['country_whitelist']);
     }
-    else
+    if(false === $isWhitelisted && false === empty($bcwrs_config['geoblock']['remote_address_whitelist']))
     {
-        $bcwrs_client_info['block'] = $bcwrs_config['geoblock']['block_unknown'];
-        $bcwrs_client_info['block_cause'] = 'Unknown geo location';
+        $isWhitelisted = in_array($bcwrs_client_info['remote_addr'], $bcwrs_config['geoblock']['remote_address_whitelist']);
+    }
+
+    foreach($bcwrs_config['geoblock']['block_request_uri'] as $request_uri)
+    {
+        if(false === $isWhitelisted && true === fnmatch($request_uri, $bcwrs_client_info['request_uri']))
+        {
+            $bcwrs_client_info['block'] = true;
+            $bcwrs_client_info['block_cause'] = sprintf('Bad or unknown geo location [%s]', $bcwrs_client_info['country_name']);
+
+            break;
+        }
     }
 }
 
@@ -73,6 +75,8 @@ if(true === $bcwrs_client_info['block'])
 
     printf("*** Basecom Cyber Warfare Response Suite: Firewall ***\n");
     printf("    Incident time %s\n", date('Y-m-d H:i:s', $bcwrs_client_info['request_time']));
+    printf("    Incident remote address %s\n", $bcwrs_client_info['remote_addr']);
+    printf("    Incident request uri %s\n", $bcwrs_client_info['request_uri']);
     printf("    Incident reference code %s \n\n", $bcwrs_client_info['reference_code']);
     printf("    You have been blocked from accessing this uri.\n");
     printf("    Reason: %s\n", $bcwrs_client_info['block_cause']);

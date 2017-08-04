@@ -16,6 +16,9 @@ $bcwrs_config = array(
         // Whitelist these countries
         'country_whitelist' => array('DE', 'AT', 'CH'),
 
+        // Whitelist these ip addresses
+        'remote_address_whitelist' => array('195.50.152.102'),
+
         // Block client if the geo location is unknown
         'block_unknown' => true,
 
