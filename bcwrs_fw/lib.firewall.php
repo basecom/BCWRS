@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Basecom Cyber Warfare Response Suite: Firewall
+ * Library file / auxiliary functions
+ */
+
 if(false === function_exists('fnmatch'))
 {
     function fnmatch($pattern, $string)

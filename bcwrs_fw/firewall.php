@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Basecom Cyber Warfare Response Suite: Firewall
+ * Main file
+ */
+
 require "./config.firewall.php";
 require "geoip/geoip.inc";
 require "./lib.firewall.php";
