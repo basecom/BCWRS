@@ -5,7 +5,6 @@
  * Main file
  */
 
-require dirname(__FILE__) . "/config.firewall.php";
 require dirname(__FILE__) . "/geoip/geoip.inc";
 require dirname(__FILE__) . "/lib.firewall.php";
 
@@ -18,42 +17,10 @@ $bcwrs_client_info['reference_code'] = uniqid('fw');
 $bcwrs_client_info['request_time'] = $_SERVER['REQUEST_TIME'];
 $bcwrs_client_info['remote_addr'] = bcwrs_fw_find_ip();
 $bcwrs_client_info['request_uri'] = $_SERVER['REQUEST_URI'];
+$bcwrs_client_info['user_agent'] = getenv('HTTP_USER_AGENT');
 list($bcwrs_client_info['country_code'], $bcwrs_client_info['country_name']) = bcwrs_fw_geolookup($bcwrs_client_info['remote_addr']);
 
-
-
-if(false === empty($bcwrs_config['geoblock']['enable']))
-{
-    $isWhitelisted = false;
-
-    if(false === empty($bcwrs_client_info['country_code']))
-    {
-        $isWhitelisted = in_array($bcwrs_client_info['country_code'], $bcwrs_config['geoblock']['country_whitelist']);
-    }
-    if(false === $isWhitelisted && false === empty($bcwrs_config['geoblock']['remote_address_whitelist']))
-    {
-        $isWhitelisted = in_array($bcwrs_client_info['remote_addr'], $bcwrs_config['geoblock']['remote_address_whitelist']);
-    }
-
-    foreach($bcwrs_config['geoblock']['block_request_uri'] as $request_uri)
-    {
-        if(false === $isWhitelisted && true === fnmatch($request_uri, $bcwrs_client_info['request_uri']))
-        {
-            $bcwrs_client_info['block'] = true;
-            $bcwrs_client_info['block_cause'] = sprintf('Bad or unknown geo location [%s]', $bcwrs_client_info['country_name']);
-
-            break;
-        }
-    }
-}
-
-if(false === empty($bcwrs_config['inputblock']['enable']) && false === $bcwrs_client_info['block'])
-{
-    $__SUPER = array($_GET, $_POST, $_COOKIE, $_REQUEST, $_SERVER, $_ENV);
-    $bcwrs_client_info['block'] = bcwrs_fw_input_analysis($__SUPER);
-    unset($__SUPER);
-}
-
+require dirname(__FILE__) . "/ruleset.firewall.php";
 
 if(true === $bcwrs_client_info['block'])
 {
@@ -63,12 +30,12 @@ if(true === $bcwrs_client_info['block'])
         date_default_timezone_set('Europe/Berlin');
     }
 
-    $fh = fopen('report.csv', 'a');
+    /*$fh = fopen('report.csv', 'a');
     if(true === is_resource($fh))
     {
         fputcsv($fh, $bcwrs_client_info, ',', '"');
         fclose($fh);
-    }
+    }*/
 
     header('Content-Type: text/plain;charset=utf-8');
     header('HTTP/1.0 403 Blocked by BCWRS Firewall');
