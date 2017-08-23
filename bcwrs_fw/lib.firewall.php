@@ -59,6 +59,25 @@ function bcwrs_fw_input_analysis(&$input, $blocklist = array())
     return $check;
 }
 
+function bcwrs_fw_country_whitelist_eval($client_country, $country_whitelist = array(), $block_unknown = true)
+{
+    $isAllowed = false;
+
+    if(false === empty($client_country))
+    {
+        $isAllowed = in_array($client_country, $country_whitelist);
+    }
+    else
+    {
+        if(false === $block_unknown)
+        {
+            $isAllowed = true;
+        }
+    }
+
+    return $isAllowed;
+}
+
 function bcwrs_fw_input_eval($input, $blocklist = array())
 {
     $result = array();
@@ -81,24 +100,12 @@ function bcwrs_fw_rule_uri_country_whitelist($request_uri, $country_whitelist = 
 {
     global $bcwrs_client_info;
 
-    $isWhitelisted = false;
+    $isAllowed = bcwrs_fw_country_whitelist_eval($bcwrs_client_info['country_code'], $country_whitelist, $block_unknown_clients);
 
-    if(false === empty($bcwrs_client_info['country_code']))
-    {
-        $isWhitelisted = in_array($bcwrs_client_info['country_code'], $country_whitelist);
-    }
-    else
-    {
-        if(false === $block_unknown_clients)
-        {
-            $isWhitelisted = true;
-        }
-    }
-
-    if(false === $isWhitelisted && true === fnmatch($request_uri, $bcwrs_client_info['request_uri']))
+    if(false === $isAllowed && true === fnmatch($request_uri, $bcwrs_client_info['request_uri']))
     {
         $bcwrs_client_info['block'] = true;
-        $bcwrs_client_info['block_cause'] = sprintf('Bad or unknown geo location [%s]', $bcwrs_client_info['country_name']);
+        $bcwrs_client_info['block_cause'] = sprintf('Restricted request uri on bad or unknown geo location [%s]', $bcwrs_client_info['country_name']);
     }
 }
 
@@ -132,5 +139,18 @@ function bcwrs_fw_rule_deny_user_agent($user_agent)
     {
         $bcwrs_client_info['block'] = true;
         $bcwrs_client_info['block_cause'] = sprintf('Bad user agent [%s]', $bcwrs_client_info['user_agent']);
+    }
+}
+
+function bcwrs_fw_rule_upload_country_whitelist($country_whitelist = array(), $block_unknown_clients = true)
+{
+    global $bcwrs_client_info;
+
+    $isAllowed = bcwrs_fw_country_whitelist_eval($bcwrs_client_info['country_code'], $country_whitelist, $block_unknown_clients);
+
+    if(false === $isAllowed && false === empty($_FILES))
+    {
+        $bcwrs_client_info['block'] = true;
+        $bcwrs_client_info['block_cause'] = sprintf('Upload on bad or unknown geo location [%s]', $bcwrs_client_info['country_name']);
     }
 }
